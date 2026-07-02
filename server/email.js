@@ -1,64 +1,14 @@
 /**
- * 邮件发送模块 — 基于 nodemailer + QQ 邮箱 SMTP
+ * 邮件发送模块
  *
- * 配置方式（.env 环境变量）:
- *   MAIL_HOST=smtp.qq.com
- *   MAIL_PORT=465
- *   MAIL_USER=your@qq.com
- *   MAIL_PASS=授权码（QQ邮箱 → 设置 → 账号 → POP3/SMTP服务 → 生成授权码）
- *   MAIL_FROM=your@qq.com
+ * 支持两种方式（按优先级）:
+ * 1. SendGrid（推荐）— 设置 SENDGRID_API_KEY 环境变量即可
+ * 2. 开发模式 — 无配置时验证码打印到日志，不实际发送
  *
- * 未配置时 sendEmailCode() 返回错误提示，不崩溃。
+ * QQ 邮箱 SMTP 方式已废弃（Railway 海外服务器无法连通）。
  */
 
-const nodemailer = require('nodemailer');
-const dns = require('dns');
-
-let transporter = null;
-let transporterReady = null; // 初始化 Promise，避免重复初始化
-
-async function getTransporter() {
-  if (transporter) return transporter;
-  if (transporterReady) return transporterReady;
-
-  transporterReady = (async () => {
-    const host = process.env.MAIL_HOST || 'smtp.qq.com';
-    const port = parseInt(process.env.MAIL_PORT || '465', 10);
-    const user = process.env.MAIL_USER;
-    const pass = process.env.MAIL_PASS;
-
-    if (!user || !pass) {
-      transporter = null;
-      return null;
-    }
-
-    // 将 SMTP 主机名解析为 IPv4 地址，避免 Railway IPv6 连接失败
-    let ipv4Host = host;
-    try {
-      const addresses = await dns.resolve4(host);
-      if (addresses.length > 0) {
-        ipv4Host = addresses[0];
-        console.log('[邮件] ' + host + ' 解析为 IPv4: ' + ipv4Host);
-      }
-    } catch (e) {
-      console.log('[邮件] IPv4 解析失败，使用原始主机名: ' + host);
-    }
-
-    transporter = nodemailer.createTransport({
-      host: ipv4Host,
-      port: port,
-      secure: port === 465,
-      auth: { user, pass },
-      connectionTimeout: 15000,
-      socketTimeout: 15000,
-      tls: { rejectUnauthorized: false }
-    });
-
-    return transporter;
-  })();
-
-  return transporterReady;
-}
+const sgMail = require('@sendgrid/mail');
 
 /**
  * 发送邮箱验证码
@@ -67,21 +17,24 @@ async function getTransporter() {
  * @returns {Promise<{success: boolean, message: string}>}
  */
 async function sendEmailCode(to, code) {
-  const transport = await getTransporter();
-  if (!transport) {
-    return {
-      success: false,
-      message: '邮箱服务未配置，请在 .env 中设置 MAIL_HOST、MAIL_USER、MAIL_PASS（推荐使用 QQ 邮箱 SMTP）'
-    };
+  const apiKey = process.env.SENDGRID_API_KEY;
+
+  if (!apiKey) {
+    // 开发模式：无 SendGrid 配置时打印到日志
+    console.log('===== 开发模式 =====');
+    console.log('[验证码] 邮箱: ' + to + ', 验证码: ' + code);
+    console.log('[提示] 设置 SENDGRID_API_KEY 可启用真实邮件发送');
+    return { success: true, message: '验证码已发送（开发模式）' };
   }
 
-  const from = process.env.MAIL_FROM || process.env.MAIL_USER;
+  sgMail.setApiKey(apiKey);
+
   console.log('[验证码] 邮箱: ' + to + ', 验证码: ' + code);
 
   try {
-    await transport.sendMail({
-      from: '"游戏登录验证" <' + from + '>',
+    await sgMail.send({
       to: to,
+      from: process.env.SENDGRID_FROM || 'noreply@flight-shooter.com',
       subject: '您的登录验证码',
       html:
         '<div style="font-family: Arial, sans-serif; max-width: 400px; margin: 0 auto;">' +
@@ -98,6 +51,7 @@ async function sendEmailCode(to, code) {
 
     return { success: true, message: '验证码已发送' };
   } catch (err) {
+    console.error('[邮件] 发送失败:', err.message);
     return { success: false, message: '邮件发送失败: ' + (err.message || '未知错误') };
   }
 }
