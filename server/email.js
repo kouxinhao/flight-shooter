@@ -12,6 +12,8 @@
  */
 
 const nodemailer = require('nodemailer');
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
 
 let transporter = null;
 
@@ -31,7 +33,10 @@ function getTransporter() {
     host: host,
     port: port,
     secure: port === 465,
-    auth: { user, pass }
+    auth: { user, pass },
+    connectionTimeout: 10000,
+    socketTimeout: 10000,
+    tls: { rejectUnauthorized: false }
   });
 
   return transporter;
