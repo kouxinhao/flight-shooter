@@ -1,0 +1,12 @@
+node_modules/
+server/node_modules/
+server/.env
+server/game.db
+.env
+verify_screenshots/
+verify_report.txt
+verify_e2e.mjs
+recon_report.txt
+recon_script.mjs
+redeye_screenshot.png
+*.log

@@ -1,0 +1,9 @@
+- [x] 页面加载后 BGM 自动尝试播放（无需点击）
+- [x] gameLoop 每帧调用 audio.tryResume()
+- [x] mousemove 触发 audio.tryResume()
+- [x] touchstart 触发 audio.tryResume()
+- [x] 浏览器阻止时，显示 "🎵 点击开启音效" 浮动提示
+- [x] AudioContext resume 后提示消失
+- [x] BGM 在 resume 后正常循环播放
+- [x] 点击启动游戏后正常切换到游戏 BGM
+- [x] 不影响静音功能

@@ -1,0 +1,2 @@
+- [x] `server/index.js` 中 `dotenv.config()` 使用了 `{ path: __dirname + '/.env' }` 参数
+- [x] 重启服务器后，发送验证码功能正常（不再提示"邮箱服务未配置"）

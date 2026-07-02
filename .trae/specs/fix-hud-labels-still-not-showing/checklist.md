@@ -1,0 +1,5 @@
+- [x] Express static file server includes `Cache-Control: no-cache` header
+- [x] Chinese labels in `drawLeftHUD()` use `"Microsoft YaHei", sans-serif` font
+- [x] Chinese labels in `drawRightInfo()` use `"Microsoft YaHei", sans-serif` font
+- [x] Server restarted and labels are visible during gameplay
+- [x] Browser console shows no Canvas-related errors

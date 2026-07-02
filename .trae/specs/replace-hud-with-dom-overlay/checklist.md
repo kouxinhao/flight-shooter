@@ -1,0 +1,9 @@
+- [x] index.html 中 `#gameContainer` 内存在 HUD 覆盖层 HTML 元素
+- [x] CSS 样式与当前暗色玻璃面板设计匹配，颜色、辉光、圆角正确
+- [x] `initHUDOverlay()` 在页面加载时创建/初始化 DOM HUD 元素
+- [x] `updateHUDOverlay()` 每帧更新所有值（生命值、得分、能量、难度、关卡）
+- [x] `drawLeftHUD()` 不再绘制 Canvas，改为调用 DOM 更新
+- [x] `drawRightInfo()` 不再绘制 Canvas，改为调用 DOM 更新
+- [x] HUD 覆盖层可见性切换正确（菜单中隐藏，playing/paused/over 时可见）
+- [x] 重启后，游戏运行中所有 5 个中文标签正确显示
+- [x] 浏览器控制台无错误

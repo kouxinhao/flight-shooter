@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飞行射击游戏</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        <div id="hudOverlay" style="display:none">
+            <!-- Left HUD panels (180px wide, left-aligned) -->
+            <div class="hud-module" id="hudHpModule" style="position:absolute;left:12px;top:10px;width:180px;height:64px;">
+                <div class="hp-icon-container">
+                    <span class="hp-icon-heart">❤</span>
+                    <span class="hp-icon-label">HP</span>
+                </div>
+                <div class="hp-number" id="hudHpNumber">5</div>
+                <div class="hp-orbs-container" id="hudHpOrbs">
+                    <div class="hp-orb filled" data-index="0"></div>
+                    <div class="hp-orb filled" data-index="1"></div>
+                    <div class="hp-orb filled" data-index="2"></div>
+                    <div class="hp-orb filled" data-index="3"></div>
+                    <div class="hp-orb filled" data-index="4"></div>
+                </div>
+                <div id="hudShieldRing" class="hp-shield-ring"></div>
+            </div>
+            <div class="hud-module" id="hudScoreModule" style="position:absolute;left:12px;top:52px;width:180px;height:32px;">
+                <div class="hud-header" id="hudScoreHeader">★ 得分</div>
+                <div class="hud-score-value" id="hudScore">0</div>
+                <div class="hud-combo" id="hudCombo"></div>
+            </div>
+            <div class="hud-module" id="hudEnergyModule" style="position:absolute;left:12px;top:90px;width:180px;height:48px;">
+                <div class="hud-header" id="hudEnergyHeader">⚡ 武器能源</div>
+                <div class="hud-energy-pct" id="hudEnergyPct">100%</div>
+                <div class="energy-bar-thick" id="hudEnergyBarThick">
+                    <div class="energy-fill" id="hudEnergyFill" style="width:100%"></div>
+                    <div class="energy-shimmer"></div>
+                </div>
+                <div class="hud-weapon-lv" id="hudWeaponLv">Lv.1</div>
+            </div>
+            <!-- Right HUD panels (120px wide, right-aligned) -->
+            <div class="hud-module-right" id="hudDiffModule" style="position:absolute;right:14px;top:42px;width:120px;height:30px;">
+                <div class="hud-header-right" id="hudDiffHeader">难度等级</div>
+                <div class="hud-right-value" id="hudDifficulty">Lv.1</div>
+            </div>
+            <div class="hud-module-right" id="hudStageModule" style="position:absolute;right:14px;top:78px;width:120px;height:30px;">
+                <div class="hud-header-right" id="hudStageHeader">当前关卡</div>
+                <div class="hud-right-value" id="hudStage">第 1 关</div>
+            </div>
+        </div>
+    </div>
+    <div id="loginPanel"></div>
+    <script src="api-client.js"></script>
+    <script src="auth-ui.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

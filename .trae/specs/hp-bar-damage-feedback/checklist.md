@@ -1,0 +1,9 @@
+- [x] `style.css` 中存在 `@keyframes damageFlash` 动画定义
+- [x] `style.css` 中存在 `@keyframes hpPulse` 动画定义
+- [x] `style.css` 中存在 `.hp-damage` 类定义（HP 条闪白）
+- [x] `style.css` 中存在 `.hp-low` 类定义（模块边框脉冲）
+- [x] `script.js` 中 `updateHUDOverlay()` 跟踪 `_prevHp` 并检测 HP 减少
+- [x] HP 减少时 `#hudHpBar` 添加 `hp-damage` 类（200ms 后移除）
+- [x] HP < 30% 时 `#hudHpModule` 添加 `hp-low` 类
+- [x] HP >= 30% 时 `#hudHpModule` 移除 `hp-low` 类
+- [x] 重启后进入游戏，受伤时 HP 条闪白、低血量时边框脉冲

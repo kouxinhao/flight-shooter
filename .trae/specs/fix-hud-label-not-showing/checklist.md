@@ -1,0 +1,4 @@
+- [x] drawRightInfo() 难度等级模块增加了 ctx.restore()
+- [x] 所有 HUD 函数的 save/restore 配对平衡
+- [x] 进入游戏后所有中文标签正常显示
+- [x] 控制台无 Canvas 相关报错
