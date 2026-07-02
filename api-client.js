@@ -1,5 +1,5 @@
 // ===== API 客户端 — 封装后端 API 调用 =====
-const API_BASE = 'http://localhost:3001';
+const API_BASE = '';
 
 // ---- Token 管理 ----
 const STORAGE_KEY_TOKEN = 'flightShooterToken';
