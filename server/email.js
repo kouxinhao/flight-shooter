@@ -13,33 +13,51 @@
 
 const nodemailer = require('nodemailer');
 const dns = require('dns');
-dns.setDefaultResultOrder('ipv4first');
 
 let transporter = null;
+let transporterReady = null; // 初始化 Promise，避免重复初始化
 
-function getTransporter() {
+async function getTransporter() {
   if (transporter) return transporter;
+  if (transporterReady) return transporterReady;
 
-  const host = process.env.MAIL_HOST;
-  const port = parseInt(process.env.MAIL_PORT || '465', 10);
-  const user = process.env.MAIL_USER;
-  const pass = process.env.MAIL_PASS;
+  transporterReady = (async () => {
+    const host = process.env.MAIL_HOST || 'smtp.qq.com';
+    const port = parseInt(process.env.MAIL_PORT || '465', 10);
+    const user = process.env.MAIL_USER;
+    const pass = process.env.MAIL_PASS;
 
-  if (!host || !user || !pass) {
-    return null;
-  }
+    if (!user || !pass) {
+      transporter = null;
+      return null;
+    }
 
-  transporter = nodemailer.createTransport({
-    host: host,
-    port: port,
-    secure: port === 465,
-    auth: { user, pass },
-    connectionTimeout: 10000,
-    socketTimeout: 10000,
-    tls: { rejectUnauthorized: false }
-  });
+    // 将 SMTP 主机名解析为 IPv4 地址，避免 Railway IPv6 连接失败
+    let ipv4Host = host;
+    try {
+      const addresses = await dns.resolve4(host);
+      if (addresses.length > 0) {
+        ipv4Host = addresses[0];
+        console.log('[邮件] ' + host + ' 解析为 IPv4: ' + ipv4Host);
+      }
+    } catch (e) {
+      console.log('[邮件] IPv4 解析失败，使用原始主机名: ' + host);
+    }
 
-  return transporter;
+    transporter = nodemailer.createTransport({
+      host: ipv4Host,
+      port: port,
+      secure: port === 465,
+      auth: { user, pass },
+      connectionTimeout: 15000,
+      socketTimeout: 15000,
+      tls: { rejectUnauthorized: false }
+    });
+
+    return transporter;
+  })();
+
+  return transporterReady;
 }
 
 /**
@@ -49,7 +67,7 @@ function getTransporter() {
  * @returns {Promise<{success: boolean, message: string}>}
  */
 async function sendEmailCode(to, code) {
-  const transport = getTransporter();
+  const transport = await getTransporter();
   if (!transport) {
     return {
       success: false,
