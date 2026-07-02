@@ -46,10 +46,11 @@ function getTransporter() {
 async function sendEmailCode(to, code) {
   const transport = getTransporter();
   if (!transport) {
-    return {
-      success: false,
-      message: '邮箱服务未配置，请在 .env 中设置 MAIL_HOST、MAIL_USER、MAIL_PASS（推荐使用 QQ 邮箱 SMTP）'
-    };
+    // 未配置邮件服务时自动进入开发模式：验证码打印到日志，前端仍返回成功
+    console.log('===== 开发模式 =====');
+    console.log('[验证码] 邮箱: ' + to + ', 验证码: ' + code);
+    console.log('[提示] 配置 MAIL_HOST/MAIL_USER/MAIL_PASS 可启用真实邮件发送');
+    return { success: true, message: '验证码已发送' };
   }
 
   const from = process.env.MAIL_FROM || process.env.MAIL_USER;
